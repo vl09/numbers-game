@@ -191,11 +191,12 @@
             const [presentationIndex, setPresentationIndex] = useState(null);
             const [availableVoices, setAvailableVoices] = useState([]);
 
-            // --- Settings State (Theme/DisplayMode logic is removed) ---
+            // --- Settings State ---
             const [language, setLanguage] = useState(() => getCookie('numGameLang') || 'nl');
             const [numDigits, setNumDigits] = useState(() => getCookie('numGameDigits') || 4);
             const [presentationSpeed, setPresentationSpeed] = useState(() => getCookie('numGameSpeed') || 800);
-            const [presentationMode, setPresentationMode] = useState(() => getCookie('numGamePresMode') || 'visual');
+            // DEFAULT SETTING CHANGED TO 'both'
+            const [presentationMode, setPresentationMode] = useState(() => getCookie('numGamePresMode') || 'both');
             const [difficulty, setDifficulty] = useState(() => getCookie('numGameDifficulty') || 'hard');
             const [gameMode, setGameMode] = useState(() => getCookie('numGameMode') || 'forward');
             const [transformValue, setTransformValue] = useState(() => getCookie('numGameTransform') || 0);
@@ -321,7 +322,6 @@
                     return;
                 }
 
-                // BUG FIX: Cancel any previously stuck utterances before speaking a new one.
                 synthRef.current.cancel();
                 
                 const digit = currentSequence[presentationIndex];
