@@ -320,6 +320,9 @@
                     setTimeout(() => inputRefs.current[0]?.focus(), 100);
                     return;
                 }
+
+                // BUG FIX: Cancel any previously stuck utterances before speaking a new one.
+                synthRef.current.cancel();
                 
                 const digit = currentSequence[presentationIndex];
                 if (presentationMode === 'visual' || presentationMode === 'both') setCurrentPresentedDigit(digit);
@@ -353,8 +356,6 @@
 
             const checkAnswer = useCallback(() => {
                 const expected = getExpectedAnswer(currentSequence);
-                // BUG FIX: Normalize player input by converting to Number and back to String
-                // This correctly handles inputs like "00" for an expected "0".
                 const normalizedPlayerInput = playerInput.map(val => String(Number(val)));
                 const isCorrect = JSON.stringify(normalizedPlayerInput) === JSON.stringify(expected);
                 
@@ -489,7 +490,6 @@
                 return React.createElement('div', { className: 'flex items-center gap-1.5' }, [ React.createElement(EyeIcon, { key: 'eye' }), React.createElement(Volume2Icon, { key: 'vol' }) ]);
             };
 
-            // FEATURE: Determine the content for the transform button
             const transformButtonContent = transformValue === 0
                 ? '±'
                 : `${transformValue > 0 ? '+' : ''}${transformValue}`;
@@ -547,7 +547,6 @@
                          React.createElement(QuickButton, { onClick: () => handleSettingChange(setNumDigits, () => numDigits >= 9 ? 3 : numDigits + 1) }, `#${numDigits}`),
                          React.createElement(QuickButton, { onClick: () => handleSettingChange(setGameMode, m => m === 'forward' ? 'asc' : m === 'asc' ? 'desc' : 'forward'), isActive: gameMode !== 'forward' }, gameMode === 'asc' ? React.createElement(ArrowUpIcon) : gameMode === 'desc' ? React.createElement(ArrowDownIcon) : React.createElement(ArrowRightIcon)),
                          React.createElement('div', { className: 'relative', ref: transformPopoverRef }, 
-                            // FEATURE: The button's content is now dynamic.
                             React.createElement(QuickButton, {
                                 onClick: () => setShowTransformPopover(p => !p),
                                 isActive: transformValue !== 0,
