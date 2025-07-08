@@ -48,7 +48,7 @@
          * - Full internationalization support (Dutch/English).
          * - Advanced difficulty-based sequence generation.
          * - Individual input boxes for multi-digit answers.
-         * - Random color mode for visual presentation.
+         * - Random color mode for visual and audio presentation.
          */
 
         const { useState, useEffect, useRef, useCallback } = React;
@@ -136,7 +136,7 @@
                 settingsTitle: "Settings",
                 language: "Language",
                 speed: "Speed",
-                speedDesc: "s / digit",
+                speedDesc: "s break",
                 difficultyEasy: "Easy",
                 difficultyMedium: "Medium",
                 difficultyHard: "Hard",
@@ -160,7 +160,7 @@
                 presModeSpoken: "Spoken: Numbers are read aloud.",
                 presModeBoth: "Both: Visual and spoken presentation.",
                 helpRandomColors: "Random Colors",
-                helpRandomColorsDesc: "Visual Mode Only: Displays each digit in a random color.",
+                helpRandomColorsDesc: "Displays each digit in a random color. In audio-only mode, a colored circle is shown instead of a number.",
                 helpDifficulty: "Difficulty",
                 helpDifficultyDesc: "Changes sequence generation. Harder difficulties use fewer unique digits, making patterns less obvious.",
                 helpMainSettings: "Main Settings",
@@ -181,7 +181,7 @@
                 settingsTitle: "Instellingen",
                 language: "Taal",
                 speed: "Snelheid",
-                speedDesc: "s / cijfer",
+                speedDesc: "s pauze",
                 difficultyEasy: "Makkelijk",
                 difficultyMedium: "Gemiddeld",
                 difficultyHard: "Moeilijk",
@@ -205,7 +205,7 @@
                 presModeSpoken: "Gesproken: Cijfers worden voorgelezen.",
                 presModeBoth: "Beide: Visuele en gesproken presentatie.",
                 helpRandomColors: "Willekeurige Kleuren",
-                helpRandomColorsDesc: "Alleen Visuele Modus: Toont elk cijfer in een willekeurige kleur.",
+                helpRandomColorsDesc: "Toont elk cijfer in een willekeurige kleur. In de alleen-audio modus wordt een gekleurde cirkel getoond in plaats van een cijfer.",
                 helpDifficulty: "Moeilijkheidsgraad",
                 helpDifficultyDesc: "Wijzigt de generatie van reeksen. Hogere moeilijkheidsgraden gebruiken minder unieke cijfers, waardoor patronen minder duidelijk zijn.",
                 helpMainSettings: "Hoofdinstellingen",
@@ -393,11 +393,13 @@
                 synthRef.current.cancel();
                 
                 const digit = currentSequence[presentationIndex];
-                if (presentationMode === 'visual' || presentationMode === 'both') setCurrentPresentedDigit(digit);
+                if (presentationMode === 'visual' || presentationMode === 'both' || (presentationMode === 'spoken' && useRandomColors)) {
+                     setCurrentPresentedDigit(digit);
+                }
                 
                 if (presentationMode === 'spoken' || presentationMode === 'both') {
                     const utterance = new SpeechSynthesisUtterance(digit.toString());
-                    utterance.rate = 2.5 - (presentationSpeed / 500);
+                    utterance.rate = 1; // Set a normal, constant speech rate
 
                     if (language === 'nl') {
                         const dutchVoice = availableVoices.find(voice => voice.lang === 'nl-NL' || voice.lang.startsWith('nl-'));
@@ -409,15 +411,22 @@
                     synthRef.current.speak(utterance);
                 }
 
+                const digitDisplayDuration = 400; // Fixed duration for how long the visual is shown
+
+                // This timeout controls how long the item is visible
                 timeoutRef.current = setTimeout(() => {
-                    if (presentationMode === 'visual' || presentationMode === 'both') setCurrentPresentedDigit(null);
+                    setCurrentPresentedDigit(null); // Hide the item
+
+                    // This timeout creates the pause *after* the item disappears and *before* the next one appears
+                    // The duration of this pause is what the user controls with the slider
                     timeoutRef.current = setTimeout(() => {
                         setPresentationIndex(i => i + 1);
-                    }, presentationSpeed / 4);
-                }, presentationSpeed);
+                    }, presentationSpeed); // Use the slider value directly for the pause
+
+                }, digitDisplayDuration);
 
                 return () => clearTimeout(timeoutRef.current);
-            }, [gameState, isPaused, presentationIndex, currentSequence, language, presentationMode, presentationSpeed, availableVoices]);
+            }, [gameState, isPaused, presentationIndex, currentSequence, language, presentationMode, presentationSpeed, availableVoices, useRandomColors]);
 
             const checkAnswer = useCallback(() => {
                 const expected = getExpectedAnswer(currentSequence);
@@ -476,24 +485,42 @@
             const renderGameArea = () => {
                 switch (gameState) {
                     case 'presenting':
-                        const digitStyle = { height: '10rem' };
-                        let digitClassName = 'text-9xl font-bold flex items-center justify-center';
+                        let presentationContent = null;
 
-                        if (useRandomColors && (presentationMode === 'visual' || presentationMode === 'both') && sequenceColors[presentationIndex]) {
-                            digitStyle.color = sequenceColors[presentationIndex];
-                        } else {
-                            digitClassName += ' text-blue-600';
+                        if (currentPresentedDigit !== null) {
+                            const isVisualPresentation = presentationMode === 'visual' || presentationMode === 'both';
+                            
+                            if (isVisualPresentation) {
+                                const digitStyle = {};
+                                let digitClassName = 'text-9xl font-bold';
+                                if (useRandomColors && sequenceColors[presentationIndex]) {
+                                    digitStyle.color = sequenceColors[presentationIndex];
+                                } else {
+                                    digitClassName += ' text-blue-600';
+                                }
+                                presentationContent = React.createElement('span', { style: digitStyle, className: digitClassName }, currentPresentedDigit);
+                            } else if (presentationMode === 'spoken') {
+                                if (useRandomColors && sequenceColors[presentationIndex]) {
+                                    const circleStyle = {
+                                        width: '10rem',
+                                        height: '10rem',
+                                        borderRadius: '50%',
+                                        backgroundColor: sequenceColors[presentationIndex],
+                                        transition: 'background-color 0.2s ease'
+                                    };
+                                    presentationContent = React.createElement('div', { style: circleStyle });
+                                } else {
+                                    presentationContent = React.createElement(Volume2Icon, { key: 'audio-icon', width: 80, height: 80, className: 'text-blue-400 opacity-75' });
+                                }
+                            }
                         }
 
                         return React.createElement('div', { className: 'flex flex-col items-center justify-center' }, [
                             React.createElement('div', {
                                 key: 'digit-display',
-                                className: digitClassName,
-                                style: digitStyle
-                            }, [
-                                (presentationMode === 'visual' || presentationMode === 'both') && currentPresentedDigit,
-                                presentationMode === 'spoken' && React.createElement(Volume2Icon, { key: 'audio-icon', width: 80, height: 80, className: 'text-blue-400 opacity-75' })
-                            ]),
+                                className: 'flex items-center justify-center mb-4',
+                                style: { height: '10rem' }
+                            }, presentationContent),
                             React.createElement(ProgressDots, {
                                 key: 'dots',
                                 count: numDigits,
@@ -713,7 +740,7 @@
                            isHighlighted: presentationMode === 'spoken',
                            isActive: presentationMode === 'both'
                        }, renderPresentationIcon()),
-                       (presentationMode === 'visual' || presentationMode === 'both') && React.createElement(QuickButton, {
+                       React.createElement(QuickButton, {
                            onClick: () => setUseRandomColors(p => !p),
                            isActive: useRandomColors,
                        }, React.createElement(HueIcon, {})),
