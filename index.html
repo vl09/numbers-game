@@ -632,7 +632,7 @@
 
                 React.createElement('div', { key: 'quick-controls', className: 'p-2 bg-white border-b border-gray-200 flex items-center gap-2' }, [
                     React.createElement('div', { className: 'flex-1' }),
-                    React.createElement('div', { className: 'flex items-center justify-center gap-2 flex-wrap' }, [
+                    React.createElement('div', { className: 'flex items-center justify-center gap-2' }, [
                          React.createElement(QuickButton, { onClick: () => handleSettingChange(setNumDigits, () => numDigits >= 9 ? 3 : numDigits + 1) }, `#${numDigits}`),
                          React.createElement('div', { className: 'relative', ref: gameModePopoverRef }, [
                             React.createElement(QuickButton, {
