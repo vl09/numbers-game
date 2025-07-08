@@ -393,7 +393,7 @@
                 synthRef.current.cancel();
                 
                 const digit = currentSequence[presentationIndex];
-                if (presentationMode === 'visual' || presentationMode === 'both' || (presentationMode === 'spoken' && useRandomColors)) {
+                if (presentationMode === 'visual' || presentationMode === 'both' || presentationMode === 'spoken') {
                      setCurrentPresentedDigit(digit);
                 }
                 
