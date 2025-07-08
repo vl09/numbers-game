@@ -352,6 +352,9 @@
                 }
 
                 if (presentationIndex >= currentSequence.length) {
+                    // Forcefully cancel any lingering speech when the sequence ends.
+                    synthRef.current.cancel();
+
                     setGameState('waiting_for_input');
                     setPresentationIndex(null);
                     setCurrentPresentedDigit(null);
