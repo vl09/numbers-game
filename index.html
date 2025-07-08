@@ -61,9 +61,9 @@
         const Volume2Icon = ({ width = 18, height = 18, className = "" }) => React.createElement('svg', { width, height, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className }, [React.createElement('polygon', { key: 1, points: "11 5 6 9 2 9 2 15 6 15 11 19 11 5" }), React.createElement('path', { key: 2, d: "M15.54 8.46a5 5 0 0 1 0 7.07" }), React.createElement('path', { key: 3, d: "M19.07 4.93a10 10 0 0 1 0 14.14" })]);
         const EyeIcon = ({ width = 18, height = 18 }) => React.createElement('svg', { width, height, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, [React.createElement('path', { d: "M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" }), React.createElement('circle', { cx: "12", cy: "12", r: "3" })]);
         const ArrowRightIcon = ({ width = 18, height = 18 }) => React.createElement('svg', { width, height, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('line', { x1: "5", y1: "12", x2: "19", y2: "12" }), React.createElement('polyline', { points: "12 5 19 12 12 19" }));
+        const ArrowLeftIcon = ({ width = 18, height = 18 }) => React.createElement('svg', { width, height, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }, [React.createElement('line', { key: 1, x1: "19", y1: "12", x2: "5", y2: "12" }), React.createElement('polyline', { key: 2, points: "12 19 5 12 12 5" })]);
         const ArrowUpIcon = ({ width = 18, height = 18 }) => React.createElement('svg', { width, height, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('line', { x1: "12", y1: "19", x2: "12", y2: "5" }), React.createElement('polyline', { points: "5 12 12 5 19 12" }));
         const ArrowDownIcon = ({ width = 18, height = 18 }) => React.createElement('svg', { width, height, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('line', { x1: "12", y1: "5", x2: "12", y2: "19" }), React.createElement('polyline', { points: "19 12 12 19 5 12" }));
-        const RewindIcon = ({ width = 18, height = 18 }) => React.createElement('svg', { width, height, viewBox: "0 0 24 24", fill: "currentColor", stroke: "currentColor", strokeWidth: "1", strokeLinecap: "round", strokeLinejoin: "round" }, [React.createElement('polygon', { points: "11 19 2 12 11 5 11 19" }), React.createElement('polygon', { points: "22 19 13 12 22 5 22 19" })]);
         const CheckIcon = ({ className }) => React.createElement('svg', { width: 24, height: 24, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", className }, React.createElement('polyline', { points: "20 6 9 17 4 12" }));
         const XCircleIcon = ({ className }) => React.createElement('svg', { width: 24, height: 24, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className }, [React.createElement('circle', { cx: 12, cy: 12, r: 10 }), React.createElement('line', { x1: 15, y1: 9, x2: 9, y2: 15 }), React.createElement('line', { x1: 9, y1: 9, x2: 15, y2: 15 })]);
         const InfoIcon = () => React.createElement('svg', { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, [React.createElement('circle', { cx: 12, cy: 12, r: 10 }), React.createElement('line', { x1: 12, y1: 16, x2: 12, y2: 12 }), React.createElement('line', { x1: 12, y1: 8, x2: 12.01, y2: 8 })]);
@@ -127,6 +127,10 @@
                 helpNumDigits: "Number of Digits",
                 helpNumDigitsDesc: "Changes the number of digits to memorize (3 to 9).",
                 helpGameMode: "Game Mode",
+                gameModeForwardName: "Forward",
+                gameModeAscName: "Ascending",
+                gameModeDescName: "Descending",
+                gameModeBackwardsName: "Backwards",
                 gameModeForward: "Forward: Answer in the order shown.",
                 gameModeAsc: "Ascending: Answer from lowest to highest.",
                 gameModeDesc: "Descending: Answer from highest to lowest.",
@@ -166,6 +170,10 @@
                 helpNumDigits: "Aantal Cijfers",
                 helpNumDigitsDesc: "Wijzigt het aantal te onthouden cijfers (3 tot 9).",
                 helpGameMode: "Spelmodus",
+                gameModeForwardName: "Voorwaarts",
+                gameModeAscName: "Oplopend",
+                gameModeDescName: "Aflopend",
+                gameModeBackwardsName: "Achterwaarts",
                 gameModeForward: "Voorwaarts: Antwoord in de getoonde volgorde.",
                 gameModeAsc: "Oplopend: Antwoord van laag naar hoog.",
                 gameModeDesc: "Aflopend: Antwoord van hoog naar laag.",
@@ -195,6 +203,7 @@
             const [result, setResult] = useState(null);
             const [showSettings, setShowSettings] = useState(false);
             const [showTransformPopover, setShowTransformPopover] = useState(false);
+            const [showGameModePopover, setShowGameModePopover] = useState(false);
             const [showHelpModal, setShowHelpModal] = useState(false);
             const [currentPresentedDigit, setCurrentPresentedDigit] = useState(null);
             const [presentationIndex, setPresentationIndex] = useState(null);
@@ -214,6 +223,7 @@
             const synthRef = useRef(window.speechSynthesis);
             const inputRefs = useRef([]);
             const transformPopoverRef = useRef(null);
+            const gameModePopoverRef = useRef(null);
 
             const t = translations[language];
             
@@ -241,17 +251,28 @@
                 setIsPaused(false);
                 setPresentationIndex(null);
                 setShowTransformPopover(false);
+                setShowGameModePopover(false);
             }, [numDigits]);
 
             useEffect(() => {
                 setPlayerInput(Array(Number(numDigits)).fill(''));
                 inputRefs.current = inputRefs.current.slice(0, numDigits);
             }, [numDigits]);
-
+            
             useEffect(() => {
                 const handleClickOutside = (event) => {
                     if (transformPopoverRef.current && !transformPopoverRef.current.contains(event.target)) {
                         setShowTransformPopover(false);
+                    }
+                };
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => document.removeEventListener("mousedown", handleClickOutside);
+            }, []);
+
+            useEffect(() => {
+                const handleClickOutside = (event) => {
+                    if (gameModePopoverRef.current && !gameModePopoverRef.current.contains(event.target)) {
+                        setShowGameModePopover(false);
                     }
                 };
                 document.addEventListener("mousedown", handleClickOutside);
@@ -402,9 +423,18 @@
                 }
             };
             
+            // BUG FIX: Restored this function that was accidentally deleted.
             const handleSettingChange = (setter, valueFn) => {
                 setter(valueFn);
                 resetGame();
+            };
+
+            const handleGameModeSelect = (selectedMode) => {
+                if (gameMode !== selectedMode) {
+                    setGameMode(selectedMode);
+                    resetGame(); 
+                }
+                setShowGameModePopover(false);
             };
 
             useEffect(() => { setCookie('numGameLang', language); }, [language]);
@@ -526,7 +556,7 @@
                     { icon: React.createElement(ArrowRightIcon, { width: 16, height: 16 }), text: t.gameModeForward },
                     { icon: React.createElement(ArrowUpIcon, { width: 16, height: 16 }), text: t.gameModeAsc },
                     { icon: React.createElement(ArrowDownIcon, { width: 16, height: 16 }), text: t.gameModeDesc },
-                    { icon: React.createElement(RewindIcon, { width: 16, height: 16 }), text: t.gameModeBackwards }
+                    { icon: React.createElement(ArrowLeftIcon, { width: 16, height: 16 }), text: t.gameModeBackwards }
                 ];
 
                 const presModeItems = [
@@ -547,11 +577,11 @@
 
                 const helpItems = [
                     { icons: [React.createElement('span', { className: 'font-mono text-xl' }, '#')], title: t.helpNumDigits, description: t.helpNumDigitsDesc },
-                    { icons: [React.createElement(ArrowRightIcon), React.createElement(ArrowUpIcon), React.createElement(ArrowDownIcon), React.createElement(RewindIcon)], title: t.helpGameMode, description: React.createElement(DescriptionList, { items: gameModeItems }) },
+                    { icons: [React.createElement(ArrowRightIcon, {}), React.createElement(ArrowLeftIcon, {}), React.createElement(ArrowUpIcon, {}), React.createElement(ArrowDownIcon, {})], title: t.helpGameMode, description: React.createElement(DescriptionList, { items: gameModeItems }) },
                     { icons: [React.createElement('span', { className: 'font-mono text-xl' }, '±')], title: t.helpTransform, description: t.helpTransformDesc },
-                    { icons: [React.createElement(EyeIcon), React.createElement(Volume2Icon)], title: t.helpPresMode, description: React.createElement(DescriptionList, { items: presModeItems }) },
+                    { icons: [React.createElement(EyeIcon, {}), React.createElement(Volume2Icon, {})], title: t.helpPresMode, description: React.createElement(DescriptionList, { items: presModeItems }) },
                     { icons: [React.createElement('span', {className: 'text-sm font-semibold' }, t.difficultyEasy)], title: t.helpDifficulty, description: t.helpDifficultyDesc },
-                    { icons: [React.createElement(SettingsIcon)], title: t.helpMainSettings, description: t.helpMainSettingsDesc }
+                    { icons: [React.createElement(SettingsIcon, {})], title: t.helpMainSettings, description: t.helpMainSettingsDesc }
                 ];
 
                 return React.createElement('div', { className: "absolute inset-0 bg-black bg-opacity-40 z-40 flex items-center justify-center p-4", onClick: () => setShowHelpModal(false) }, 
@@ -572,7 +602,7 @@
                 switch(gameMode) {
                     case 'asc': return React.createElement(ArrowUpIcon);
                     case 'desc': return React.createElement(ArrowDownIcon);
-                    case 'backwards': return React.createElement(RewindIcon);
+                    case 'backwards': return React.createElement(ArrowLeftIcon);
                     case 'forward':
                     default:
                         return React.createElement(ArrowRightIcon);
@@ -604,7 +634,27 @@
                     React.createElement('div', { className: 'flex-1' }),
                     React.createElement('div', { className: 'flex items-center justify-center gap-2 flex-wrap' }, [
                          React.createElement(QuickButton, { onClick: () => handleSettingChange(setNumDigits, () => numDigits >= 9 ? 3 : numDigits + 1) }, `#${numDigits}`),
-                         React.createElement(QuickButton, { onClick: () => handleSettingChange(setGameMode, m => m === 'forward' ? 'asc' : m === 'asc' ? 'desc' : m === 'desc' ? 'backwards' : 'forward'), isActive: gameMode !== 'forward' }, renderGameModeIcon()),
+                         React.createElement('div', { className: 'relative', ref: gameModePopoverRef }, [
+                            React.createElement(QuickButton, {
+                                onClick: () => setShowGameModePopover(p => !p),
+                                isActive: gameMode !== 'forward'
+                            }, renderGameModeIcon()),
+                            showGameModePopover && React.createElement('div', { className: 'absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white p-2 rounded-lg shadow-lg border border-gray-200 w-48 z-20' },
+                                [
+                                    { id: 'forward',   icon: ArrowRightIcon, text: t.gameModeForwardName },
+                                    { id: 'asc',       icon: ArrowUpIcon,    text: t.gameModeAscName },
+                                    { id: 'desc',      icon: ArrowDownIcon,  text: t.gameModeDescName },
+                                    { id: 'backwards', icon: ArrowLeftIcon,  text: t.gameModeBackwardsName }
+                                ].map(option => React.createElement('button', {
+                                    key: option.id,
+                                    onClick: () => handleGameModeSelect(option.id),
+                                    className: `w-full flex items-center gap-3 p-2 text-left rounded-md hover:bg-gray-100 ${gameMode === option.id ? 'font-bold text-blue-600' : ''}`
+                                }, [
+                                    React.createElement(option.icon, { key: 'icon', width: 18, height: 18 }),
+                                    React.createElement('span', { key: 'text' }, option.text)
+                                ]))
+                            )
+                         ]),
                          React.createElement('div', { className: 'relative', ref: transformPopoverRef }, 
                             React.createElement(QuickButton, {
                                 onClick: () => setShowTransformPopover(p => !p),
