@@ -106,7 +106,7 @@
             en: {
                 title: "Number Memory Game",
                 description: "Memorize the sequence of numbers, then type them back according to the active game mode.",
-                startGame: "Start Game",
+                startGame: "Start",
                 score: "Score",
                 round: "Round",
                 yourTurn: "Your turn",
@@ -149,7 +149,7 @@
             nl: {
                 title: "Cijfer Geheugen Spel",
                 description: "Onthoud de reeks cijfers en typ ze vervolgens terug volgens de actieve spelmodus.",
-                startGame: "Start Spel",
+                startGame: "Start",
                 score: "Score",
                 round: "Ronde",
                 yourTurn: "Jouw beurt",
@@ -214,7 +214,7 @@
             const [numDigits, setNumDigits] = useState(() => getCookie('numGameDigits') || 4);
             const [presentationSpeed, setPresentationSpeed] = useState(() => getCookie('numGameSpeed') || 800);
             const [presentationMode, setPresentationMode] = useState(() => getCookie('numGamePresMode') || 'both');
-            const [difficulty, setDifficulty] = useState(() => getCookie('numGameDifficulty') || 'hard');
+            const [difficulty, setDifficulty] = useState(() => getCookie('numGameDifficulty') || 'medium');
             const [gameMode, setGameMode] = useState(() => getCookie('numGameMode') || 'forward');
             const [transformValue, setTransformValue] = useState(() => getCookie('numGameTransform') || 0);
 
