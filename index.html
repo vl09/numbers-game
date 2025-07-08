@@ -509,7 +509,7 @@
             };
 
             const QuickButton = ({ onClick, children, isActive, isHighlighted, className = '' }) => {
-                const baseClasses = "h-10 px-2 rounded-lg font-semibold text-sm transition-colors flex items-center justify-center gap-2";
+                const baseClasses = "h-10 px-2 sm:px-3 rounded-lg font-semibold text-sm sm:text-base transition-colors flex items-center justify-center gap-2";
                 const activeClasses = "bg-blue-100 text-blue-600";
                 const highlightedClasses = "bg-blue-600 hover:bg-blue-700 text-white";
                 const inactiveClasses = "bg-gray-100 hover:bg-gray-200 text-gray-600";
@@ -632,7 +632,7 @@
 
                 React.createElement('div', { key: 'quick-controls', className: 'p-2 bg-white border-b border-gray-200 flex items-center gap-2' }, [
                     // This new container groups the main buttons and lets them take up available space without wrapping.
-                    React.createElement('div', { className: 'flex-grow flex items-center justify-center gap-1' }, [
+                    React.createElement('div', { className: 'flex-grow flex items-center justify-center gap-1 sm:gap-2' }, [
                         React.createElement(QuickButton, { onClick: () => handleSettingChange(setNumDigits, () => numDigits >= 9 ? 3 : numDigits + 1) }, `#${numDigits}`),
                         React.createElement('div', { className: 'relative', ref: gameModePopoverRef }, [
                            React.createElement(QuickButton, {
