@@ -378,28 +378,27 @@
             };
             
             const getResponsiveInputStyles = (numDigits) => {
-                // HIGH digit count (6+): Flexible, full-width layout
-                if (numDigits > 5) {
-                    let textSize = 'text-2xl';
-                    let boxHeight = 'h-16';
-                    let gap = 'gap-1.5';
-
-                    if (numDigits > 7) { // Special adjustments for 8 or 9 digits
-                        textSize = 'text-xl';
-                        boxHeight = 'h-12';
-                        gap = 'gap-1';
-                    }
-
+                // 8 or 9 digits: Use a slightly wider box (w-9) and smaller font (text-xl).
+                if (numDigits > 7) {
                     return {
-                        containerClasses: `flex w-full px-2 ${gap}`,
-                        inputClasses: `flex-1 ${boxHeight} ${textSize} min-w-0`
+                        containerGap: 'gap-1',
+                        boxSize: 'w-9 h-12', // Was w-8, now slightly wider
+                        textSize: 'text-xl'    // Was text-2xl, now smaller for "-15"
                     };
                 }
-
-                // LOW digit count (<=5): Centered, fixed-width boxes
+                // 6 or 7 digits: Keep the box size but reduce the gap for a better fit.
+                if (numDigits > 5) {
+                    return {
+                        containerGap: 'gap-1.5', // Was gap-2
+                        boxSize: 'w-12 h-16',
+                        textSize: 'text-3xl'
+                    };
+                }
+                // Default for 5 or fewer digits: The original large, handsome boxes.
                 return {
-                    containerClasses: 'flex justify-center gap-2 md:gap-4',
-                    inputClasses: 'w-16 h-20 text-4xl'
+                    containerGap: 'gap-2 md:gap-4',
+                    boxSize: 'w-16 h-20',
+                    textSize: 'text-4xl'
                 };
             };
 
@@ -574,8 +573,8 @@
                             React.createElement('div', { key: 'prompt', className: 'text-2xl text-gray-500 mb-4' }, t.yourTurn),
                             React.createElement('div', {
                                 key: 'input-area',
-                                // 1. Use the new dynamic container classes
-                                className: styles.containerClasses,
+                                // Use the centered container with its dynamic gap
+                                className: `flex justify-center ${styles.containerGap}`,
                                 onBlur: (e) => {
                                     if (!e.currentTarget.contains(e.relatedTarget)) {
                                         setActiveInputIndex(null);
@@ -590,8 +589,8 @@
                                             onFocus: () => setActiveInputIndex(index),
                                             onChange: e => handleInputChange(e, index),
                                             onKeyDown: e => handleKeyDown(e, index),
-                                            // 2. Use the new dynamic input classes
-                                            className: `${styles.inputClasses} font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition`
+                                            // Use the fixed box and text sizes from our styles
+                                            className: `${styles.boxSize} ${styles.textSize} font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition`
                                         }),
                                         // +/- button logic remains the same
                                         React.createElement('button', {
@@ -604,7 +603,7 @@
                             ),
                             React.createElement('button', {
                                 key: 'submit', onClick: checkAnswer,
-                                className: "mt-8 px-8 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-500 transition-colors text-lg shadow-md"
+                                className: "mt-6 px-8 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-500 transition-colors text-lg shadow-md"
                             }, t.checkAnswer)
                         ]);
                     }
