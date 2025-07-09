@@ -460,7 +460,7 @@
                     const newPlayerInput = [...playerInput];
                     newPlayerInput[index] = value;
                     setPlayerInput(newPlayerInput);
-                    if (value && transformValue === 0 && index < numDigits - 1) {
+                    if (value.length > 0 && value !== '-' && index < numDigits - 1) {
                         inputRefs.current[index + 1].focus();
                     }
                 }
@@ -567,7 +567,11 @@
                                         }),
                                         // 3. Add the toggle button
                                         React.createElement('button', {
-                                            onClick: () => handleToggleSign(index),
+                                            // Change onClick to onMouseDown and prevent the default focus behavior
+                                            onMouseDown: (e) => {
+                                                e.preventDefault();
+                                                handleToggleSign(index);
+                                            },
                                             // Only show if the transform is negative and this input is active
                                             className: `w-10 h-8 rounded-md bg-gray-200 text-gray-700 font-mono text-lg transition-opacity ${transformValue < 0 && activeInputIndex === index ? 'opacity-100' : 'opacity-0'}`,
                                             style: { pointerEvents: (transformValue < 0 && activeInputIndex === index) ? 'auto' : 'none' } // Make it unclickable when invisible
