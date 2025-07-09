@@ -378,25 +378,28 @@
             };
             
             const getResponsiveInputStyles = (numDigits) => {
-                if (numDigits > 7) { // Styles for 8 or 9 digits
+                // HIGH digit count (6+): Flexible, full-width layout
+                if (numDigits > 5) {
+                    let textSize = 'text-2xl';
+                    let boxHeight = 'h-16';
+                    let gap = 'gap-1.5';
+
+                    if (numDigits > 7) { // Special adjustments for 8 or 9 digits
+                        textSize = 'text-xl';
+                        boxHeight = 'h-12';
+                        gap = 'gap-1';
+                    }
+
                     return {
-                        containerGap: 'gap-1',  // Smallest gap
-                        boxHeight: 'h-12',      // Small height
-                        textSize: 'text-xl'     // Smaller font to fit "-10"
+                        containerClasses: `flex w-full px-2 ${gap}`,
+                        inputClasses: `flex-1 ${boxHeight} ${textSize} min-w-0`
                     };
                 }
-                if (numDigits > 5) { // Styles for 6 or 7 digits
-                    return {
-                        containerGap: 'gap-1.5', // Medium gap
-                        boxHeight: 'h-16',       // Medium height
-                        textSize: 'text-2xl'
-                    };
-                }
-                // Default styles for 3, 4, or 5 digits
+
+                // LOW digit count (<=5): Centered, fixed-width boxes
                 return {
-                    containerGap: 'gap-2',   // Larger gap
-                    boxHeight: 'h-20',       // Large height
-                    textSize: 'text-4xl'
+                    containerClasses: 'flex justify-center gap-2 md:gap-4',
+                    inputClasses: 'w-16 h-20 text-4xl'
                 };
             };
 
@@ -564,15 +567,15 @@
                                 activeIndex: presentationIndex
                             })
                         ]);
-                    case 'waiting_for_input': { // Add curly braces to create a new scope
-                        const styles = getResponsiveInputStyles(numDigits); // 1. Call the helper function
+                    case 'waiting_for_input': { 
+                        const styles = getResponsiveInputStyles(numDigits);
 
                         return React.createElement('div', { className: 'text-center' }, [
                             React.createElement('div', { key: 'prompt', className: 'text-2xl text-gray-500 mb-4' }, t.yourTurn),
                             React.createElement('div', {
                                 key: 'input-area',
-                                // 2. Use the dynamic gap for the container
-                                className: `flex w-full px-2 ${styles.containerGap}`,
+                                // 1. Use the new dynamic container classes
+                                className: styles.containerClasses,
                                 onBlur: (e) => {
                                     if (!e.currentTarget.contains(e.relatedTarget)) {
                                         setActiveInputIndex(null);
@@ -587,19 +590,14 @@
                                             onFocus: () => setActiveInputIndex(index),
                                             onChange: e => handleInputChange(e, index),
                                             onKeyDown: e => handleKeyDown(e, index),
-                                            // 3. Use the dynamic classes for the input box
-                                            className: `flex-1 ${styles.boxHeight} ${styles.textSize} min-w-0 font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition`
+                                            // 2. Use the new dynamic input classes
+                                            className: `${styles.inputClasses} font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition`
                                         }),
-                                        // 3. Add the toggle button
+                                        // +/- button logic remains the same
                                         React.createElement('button', {
-                                            // Change onClick to onMouseDown and prevent the default focus behavior
-                                            onMouseDown: (e) => {
-                                                e.preventDefault();
-                                                handleToggleSign(index);
-                                            },
-                                            // Only show if the transform is negative and this input is active
+                                            onMouseDown: (e) => { e.preventDefault(); handleToggleSign(index); },
                                             className: `w-10 h-8 rounded-md bg-gray-200 text-gray-700 font-mono text-lg transition-opacity ${transformValue < 0 && activeInputIndex === index ? 'opacity-100' : 'opacity-0'}`,
-                                            style: { pointerEvents: (transformValue < 0 && activeInputIndex === index) ? 'auto' : 'none' } // Make it unclickable when invisible
+                                            style: { pointerEvents: (transformValue < 0 && activeInputIndex === index) ? 'auto' : 'none' }
                                         }, '+/-')
                                     ])
                                 )
