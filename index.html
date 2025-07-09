@@ -543,7 +543,7 @@
                         ]);
                     case 'waiting_for_input':
                         return React.createElement('div', { className: 'text-center' }, [
-                            React.createElement('div', { key: 'prompt', className: 'text-2xl text-gray-500 mb-6' }, t.yourTurn),
+                            React.createElement('div', { key: 'prompt', className: 'text-2xl text-gray-500 mb-4' }, t.yourTurn),
                             // Add onBlur to hide the toggle when focus leaves the input area
                             React.createElement('div', { 
                                 key: 'input-area', 
@@ -787,7 +787,7 @@
                    React.createElement('button', { onClick: () => setShowHelpModal(true), className: 'h-10 px-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0' }, React.createElement(InfoIcon))
                 ]),
 
-                React.createElement('div', { key: 'game-area', className: "flex-1 flex items-center justify-center" }, renderGameArea()),
+                React.createElement('div', { key: 'game-area', className: "flex-1 flex items-start justify-center pt-12" }, renderGameArea()),
                 
                 showHelpModal && React.createElement(HelpModalContent),
 
