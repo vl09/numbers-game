@@ -460,7 +460,7 @@
                     const newPlayerInput = [...playerInput];
                     newPlayerInput[index] = value;
                     setPlayerInput(newPlayerInput);
-                    if (value.length > 0 && value !== '-' && index < numDigits - 1) {
+                    if (value && transformValue === 0 && index < numDigits - 1) {
                         inputRefs.current[index + 1].focus();
                     }
                 }
