@@ -609,6 +609,7 @@
                                 className: "mt-8 px-8 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-500 transition-colors text-lg shadow-md"
                             }, t.checkAnswer)
                         ]);
+                    }
                     case 'showing_result':
                         return React.createElement('div', { className: 'text-center' }, [
                             result.success ? React.createElement(CheckIcon, { key: 'icon', className: 'text-green-500 w-24 h-24 mx-auto' }) : React.createElement(XCircleIcon, { key: 'icon', className: 'text-red-500 w-24 h-24 mx-auto' }),
