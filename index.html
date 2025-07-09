@@ -52,6 +52,20 @@
          */
 
         const { useState, useEffect, useRef, useCallback } = React;
+        
+        const useIsMobile = (breakpoint = 768) => {
+            const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
+
+            useEffect(() => {
+                const handleResize = () => {
+                    setIsMobile(window.innerWidth < breakpoint);
+                };
+                window.addEventListener('resize', handleResize);
+                return () => window.removeEventListener('resize', handleResize);
+            }, [breakpoint]);
+
+            return isMobile;
+        };
 
         // --- Icon Components ---
         const PlayIcon = () => React.createElement('svg', { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('polygon', { points: "5,3 19,12 5,21" }));
@@ -215,6 +229,7 @@
 
         // --- Main Game Component ---
         const NumberMemoryGame = () => {
+            const isMobile = useIsMobile();
             // --- State Management ---
             const [gameState, setGameState] = useState('idle');
             const [isPaused, setIsPaused] = useState(false);
@@ -368,35 +383,46 @@
                 const newPlayerInput = [...playerInput];
                 const currentValue = newPlayerInput[index];
 
-                if (currentValue === null || currentValue === '') return; // Do nothing if the box is empty
+                if (currentValue === null || currentValue === '') return;
 
                 const num = Number(currentValue);
-                if (isNaN(num)) return; // Safety check
+                if (isNaN(num)) return;
 
-                newPlayerInput[index] = String(num * -1); // Negate the number and convert back to a string
+                newPlayerInput[index] = String(num * -1);
                 setPlayerInput(newPlayerInput);
             };
             
-            const getResponsiveInputStyles = (numDigits) => {
+            const getResponsiveInputStyles = (numDigits, isMobile) => {
+                // For desktop, always use the large, spacious boxes.
+                if (!isMobile) {
+                    return {
+                        gap: 'gap-4',
+                        boxSize: 'w-16 h-20',
+                        textSize: 'text-4xl'
+                    };
+                }
+
+                // --- Mobile-only logic below ---
+
                 // 8 or 9 digits: Use a slightly wider box (w-9) and smaller font (text-xl).
                 if (numDigits > 7) {
                     return {
-                        containerGap: 'gap-1',
-                        boxSize: 'w-9 h-12', // Was w-8, now slightly wider
-                        textSize: 'text-xl'    // Was text-2xl, now smaller for "-15"
+                        gap: 'gap-1',
+                        boxSize: 'w-9 h-12',
+                        textSize: 'text-xl'
                     };
                 }
                 // 6 or 7 digits: Keep the box size but reduce the gap for a better fit.
                 if (numDigits > 5) {
                     return {
-                        containerGap: 'gap-1.5', // Was gap-2
+                        gap: 'gap-1.5',
                         boxSize: 'w-12 h-16',
                         textSize: 'text-3xl'
                     };
                 }
-                // Default for 5 or fewer digits: The original large, handsome boxes.
+                // Default for 5 or fewer digits on mobile.
                 return {
-                    containerGap: 'gap-2 md:gap-4',
+                    gap: 'gap-2',
                     boxSize: 'w-16 h-20',
                     textSize: 'text-4xl'
                 };
@@ -425,7 +451,10 @@
                     setGameState('waiting_for_input');
                     setPresentationIndex(null);
                     setCurrentPresentedDigit(null);
-                    setTimeout(() => inputRefs.current[0]?.focus({ preventScroll: true }), 100);
+                    setTimeout(() => {
+                        const focusOptions = { preventScroll: isMobile };
+                        inputRefs.current[0]?.focus(focusOptions);
+                    }, 100);
                     return;
                 }
 
@@ -438,7 +467,7 @@
                 
                 if (presentationMode === 'spoken' || presentationMode === 'both') {
                     const utterance = new SpeechSynthesisUtterance(digit.toString());
-                    utterance.rate = 1; // Set a normal, constant speech rate
+                    utterance.rate = 1;
 
                     if (language === 'nl') {
                         const dutchVoice = availableVoices.find(voice => voice.lang === 'nl-NL' || voice.lang.startsWith('nl-'));
@@ -450,22 +479,19 @@
                     synthRef.current.speak(utterance);
                 }
 
-                const digitDisplayDuration = 400; // Fixed duration for how long the visual is shown
+                const digitDisplayDuration = 400;
 
-                // This timeout controls how long the item is visible
                 timeoutRef.current = setTimeout(() => {
-                    setCurrentPresentedDigit(null); // Hide the item
+                    setCurrentPresentedDigit(null);
 
-                    // This timeout creates the pause *after* the item disappears and *before* the next one appears
-                    // The duration of this pause is what the user controls with the slider
                     timeoutRef.current = setTimeout(() => {
                         setPresentationIndex(i => i + 1);
-                    }, presentationSpeed); // Use the slider value directly for the pause
+                    }, presentationSpeed);
 
                 }, digitDisplayDuration);
 
                 return () => clearTimeout(timeoutRef.current);
-            }, [gameState, isPaused, presentationIndex, currentSequence, language, presentationMode, presentationSpeed, availableVoices, useRandomColors]);
+            }, [gameState, isPaused, presentationIndex, currentSequence, language, presentationMode, presentationSpeed, availableVoices, useRandomColors, isMobile]);
 
             const checkAnswer = useCallback(() => {
                 const expected = getExpectedAnswer(currentSequence);
@@ -566,15 +592,14 @@
                                 activeIndex: presentationIndex
                             })
                         ]);
-                    case 'waiting_for_input': { 
-                        const styles = getResponsiveInputStyles(numDigits);
+                    case 'waiting_for_input': {
+                        const styles = getResponsiveInputStyles(numDigits, isMobile);
 
                         return React.createElement('div', { className: 'text-center' }, [
                             React.createElement('div', { key: 'prompt', className: 'text-2xl text-gray-500 mb-4' }, t.yourTurn),
                             React.createElement('div', {
                                 key: 'input-area',
-                                // Use the centered container with its dynamic gap
-                                className: `flex justify-center ${styles.containerGap}`,
+                                className: `flex justify-center ${styles.gap}`,
                                 onBlur: (e) => {
                                     if (!e.currentTarget.contains(e.relatedTarget)) {
                                         setActiveInputIndex(null);
@@ -592,12 +617,13 @@
                                             },
                                             onChange: e => handleInputChange(e, index),
                                             onKeyDown: e => handleKeyDown(e, index),
-                                            // Use the fixed box and text sizes from our styles
                                             className: `${styles.boxSize} ${styles.textSize} font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition`
                                         }),
-                                        // +/- button logic remains the same
                                         React.createElement('button', {
-                                            onMouseDown: (e) => { e.preventDefault(); handleToggleSign(index); },
+                                            onMouseDown: (e) => {
+                                                e.preventDefault();
+                                                handleToggleSign(index);
+                                            },
                                             className: `w-10 h-8 rounded-md bg-gray-200 text-gray-700 font-mono text-lg transition-opacity ${transformValue < 0 && activeInputIndex === index ? 'opacity-100' : 'opacity-0'}`,
                                             style: { pointerEvents: (transformValue < 0 && activeInputIndex === index) ? 'auto' : 'none' }
                                         }, '+/-')
