@@ -586,7 +586,10 @@
                                         React.createElement('input', {
                                             ref: el => inputRefs.current[index] = el,
                                             type: "text", inputMode: "numeric", value: value,
-                                            onFocus: () => setActiveInputIndex(index),
+                                            onFocus: (e) => {
+                                                e.target.select();
+                                                setActiveInputIndex(index);
+                                            },
                                             onChange: e => handleInputChange(e, index),
                                             onKeyDown: e => handleKeyDown(e, index),
                                             // Use the fixed box and text sizes from our styles
