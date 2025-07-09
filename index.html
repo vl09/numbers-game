@@ -380,22 +380,22 @@
             const getResponsiveInputStyles = (numDigits) => {
                 if (numDigits > 7) { // Styles for 8 or 9 digits
                     return {
-                        containerGap: 'gap-1',
-                        boxSize: 'w-8 h-12',
-                        textSize: 'text-2xl'
+                        containerGap: 'gap-1',  // Smallest gap
+                        boxHeight: 'h-12',      // Small height
+                        textSize: 'text-xl'     // Smaller font to fit "-10"
                     };
                 }
                 if (numDigits > 5) { // Styles for 6 or 7 digits
                     return {
-                        containerGap: 'gap-2',
-                        boxSize: 'w-12 h-16',
-                        textSize: 'text-3xl'
+                        containerGap: 'gap-1.5', // Medium gap
+                        boxHeight: 'h-16',       // Medium height
+                        textSize: 'text-2xl'
                     };
                 }
                 // Default styles for 3, 4, or 5 digits
                 return {
-                    containerGap: 'gap-2 md:gap-4',
-                    boxSize: 'w-16 h-20',
+                    containerGap: 'gap-2',   // Larger gap
+                    boxHeight: 'h-20',       // Large height
                     textSize: 'text-4xl'
                 };
             };
@@ -572,7 +572,7 @@
                             React.createElement('div', {
                                 key: 'input-area',
                                 // 2. Use the dynamic gap for the container
-                                className: `flex justify-center ${styles.containerGap}`,
+                                className: `flex w-full px-2 ${styles.containerGap}`,
                                 onBlur: (e) => {
                                     if (!e.currentTarget.contains(e.relatedTarget)) {
                                         setActiveInputIndex(null);
@@ -588,7 +588,7 @@
                                             onChange: e => handleInputChange(e, index),
                                             onKeyDown: e => handleKeyDown(e, index),
                                             // 3. Use the dynamic classes for the input box
-                                            className: `${styles.boxSize} ${styles.textSize} font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition`
+                                            className: `flex-1 ${styles.boxHeight} ${styles.textSize} min-w-0 font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition`
                                         }),
                                         // 3. Add the toggle button
                                         React.createElement('button', {
