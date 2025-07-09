@@ -231,6 +231,7 @@
             const [presentationIndex, setPresentationIndex] = useState(null);
             const [availableVoices, setAvailableVoices] = useState([]);
             const [sequenceColors, setSequenceColors] = useState([]);
+            const [activeInputIndex, setActiveInputIndex] = useState(null);
 
             // --- Settings State ---
             const [language, setLanguage] = useState(() => getCookie('numGameLang') || 'nl');
@@ -361,6 +362,19 @@
             const getRandomColor = () => {
                 const brightColors = ['#FF0000', '#FFFF00', '#0033CC', '#FF9900', '#00CC00', '#660099'];
                 return brightColors[Math.floor(Math.random() * brightColors.length)];
+            };
+            
+            const handleToggleSign = (index) => {
+                const newPlayerInput = [...playerInput];
+                const currentValue = newPlayerInput[index];
+
+                if (currentValue === null || currentValue === '') return; // Do nothing if the box is empty
+
+                const num = Number(currentValue);
+                if (isNaN(num)) return; // Safety check
+
+                newPlayerInput[index] = String(num * -1); // Negate the number and convert back to a string
+                setPlayerInput(newPlayerInput);
             };
 
             const startRound = () => {
@@ -530,18 +544,35 @@
                     case 'waiting_for_input':
                         return React.createElement('div', { className: 'text-center' }, [
                             React.createElement('div', { key: 'prompt', className: 'text-2xl text-gray-500 mb-6' }, t.yourTurn),
-                            React.createElement('div', { key: 'input-area', className: 'flex justify-center gap-2 md:gap-4' },
+                            // Add onBlur to hide the toggle when focus leaves the input area
+                            React.createElement('div', { 
+                                key: 'input-area', 
+                                className: 'flex justify-center gap-2 md:gap-4',
+                                onBlur: (e) => { 
+                                    if (!e.currentTarget.contains(e.relatedTarget)) {
+                                        setActiveInputIndex(null);
+                                    }
+                                }
+                            },
                                 playerInput.map((value, index) =>
-                                    React.createElement('input', {
-                                        key: index, ref: el => inputRefs.current[index] = el,
-                                        type: "text", 
-                                        // Dynamically set the keyboard based on the transform value
-                                        inputMode: transformValue < 0 ? 'text' : 'numeric', 
-                                        value: value,
-                                        onChange: e => handleInputChange(e, index),
-                                        onKeyDown: e => handleKeyDown(e, index),
-                                        className: "w-16 h-20 text-4xl font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
-                                    })
+                                    // 1. Wrap each input in a div to hold the input and the button
+                                    React.createElement('div', { key: index, className: 'flex flex-col items-center gap-2' }, [
+                                        React.createElement('input', {
+                                            ref: el => inputRefs.current[index] = el,
+                                            type: "text", inputMode: "numeric", value: value,
+                                            onFocus: () => setActiveInputIndex(index), // 2. Set active index on focus
+                                            onChange: e => handleInputChange(e, index),
+                                            onKeyDown: e => handleKeyDown(e, index),
+                                            className: "w-16 h-20 text-4xl font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
+                                        }),
+                                        // 3. Add the toggle button
+                                        React.createElement('button', {
+                                            onClick: () => handleToggleSign(index),
+                                            // Only show if the transform is negative and this input is active
+                                            className: `w-10 h-8 rounded-md bg-gray-200 text-gray-700 font-mono text-lg transition-opacity ${transformValue < 0 && activeInputIndex === index ? 'opacity-100' : 'opacity-0'}`,
+                                            style: { pointerEvents: (transformValue < 0 && activeInputIndex === index) ? 'auto' : 'none' } // Make it unclickable when invisible
+                                        }, '+/-')
+                                    ])
                                 )
                             ),
                             React.createElement('button', {
