@@ -376,6 +376,29 @@
                 newPlayerInput[index] = String(num * -1); // Negate the number and convert back to a string
                 setPlayerInput(newPlayerInput);
             };
+            
+            const getResponsiveInputStyles = (numDigits) => {
+                if (numDigits > 7) { // Styles for 8 or 9 digits
+                    return {
+                        containerGap: 'gap-1',
+                        boxSize: 'w-8 h-12',
+                        textSize: 'text-2xl'
+                    };
+                }
+                if (numDigits > 5) { // Styles for 6 or 7 digits
+                    return {
+                        containerGap: 'gap-2',
+                        boxSize: 'w-12 h-16',
+                        textSize: 'text-3xl'
+                    };
+                }
+                // Default styles for 3, 4, or 5 digits
+                return {
+                    containerGap: 'gap-2 md:gap-4',
+                    boxSize: 'w-16 h-20',
+                    textSize: 'text-4xl'
+                };
+            };
 
             const startRound = () => {
                 if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -541,29 +564,31 @@
                                 activeIndex: presentationIndex
                             })
                         ]);
-                    case 'waiting_for_input':
+                    case 'waiting_for_input': { // Add curly braces to create a new scope
+                        const styles = getResponsiveInputStyles(numDigits); // 1. Call the helper function
+
                         return React.createElement('div', { className: 'text-center' }, [
                             React.createElement('div', { key: 'prompt', className: 'text-2xl text-gray-500 mb-4' }, t.yourTurn),
-                            // Add onBlur to hide the toggle when focus leaves the input area
-                            React.createElement('div', { 
-                                key: 'input-area', 
-                                className: 'flex justify-center gap-2 md:gap-4',
-                                onBlur: (e) => { 
+                            React.createElement('div', {
+                                key: 'input-area',
+                                // 2. Use the dynamic gap for the container
+                                className: `flex justify-center ${styles.containerGap}`,
+                                onBlur: (e) => {
                                     if (!e.currentTarget.contains(e.relatedTarget)) {
                                         setActiveInputIndex(null);
                                     }
                                 }
                             },
                                 playerInput.map((value, index) =>
-                                    // 1. Wrap each input in a div to hold the input and the button
                                     React.createElement('div', { key: index, className: 'flex flex-col items-center gap-2' }, [
                                         React.createElement('input', {
                                             ref: el => inputRefs.current[index] = el,
                                             type: "text", inputMode: "numeric", value: value,
-                                            onFocus: () => setActiveInputIndex(index), // 2. Set active index on focus
+                                            onFocus: () => setActiveInputIndex(index),
                                             onChange: e => handleInputChange(e, index),
                                             onKeyDown: e => handleKeyDown(e, index),
-                                            className: "w-16 h-20 text-4xl font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
+                                            // 3. Use the dynamic classes for the input box
+                                            className: `${styles.boxSize} ${styles.textSize} font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition`
                                         }),
                                         // 3. Add the toggle button
                                         React.createElement('button', {
