@@ -534,7 +534,10 @@
                                 playerInput.map((value, index) =>
                                     React.createElement('input', {
                                         key: index, ref: el => inputRefs.current[index] = el,
-                                        type: "text", inputMode: "numeric", value: value,
+                                        type: "text", 
+                                        // Dynamically set the keyboard based on the transform value
+                                        inputMode: transformValue < 0 ? 'text' : 'numeric', 
+                                        value: value,
                                         onChange: e => handleInputChange(e, index),
                                         onKeyDown: e => handleKeyDown(e, index),
                                         className: "w-16 h-20 text-4xl font-semibold text-center text-gray-700 bg-white border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
