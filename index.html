@@ -502,7 +502,14 @@
                 if (isCorrect) setScore(prev => prev + 1);
                 setRoundsPlayed(prev => prev + 1);
                 setGameState('showing_result');
-                timeoutRef.current = setTimeout(startRound, 3500);
+                    
+                // Calculate a dynamic delay based on the number of digits
+                const baseDelay = 2500; // 2.5 seconds base time
+                const timePerDigit = 200; // Add 200ms extra per digit
+                const resultScreenDelay = baseDelay + (numDigits * timePerDigit);
+
+                timeoutRef.current = setTimeout(startRound, resultScreenDelay);
+                    
             }, [playerInput, currentSequence, gameMode, transformValue]);
 
             const handleInputChange = (e, index) => {
