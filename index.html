@@ -636,44 +636,44 @@
                             }, t.checkAnswer)
                         ]);
                     }
-                    case 'showing_result':
-                        return React.createElement('div', { className: 'text-center' }, [
-                            result.success ? React.createElement(CheckIcon, { key: 'icon', className: 'text-green-500 w-24 h-24 mx-auto' }) : React.createElement(XCircleIcon, { key: 'icon', className: 'text-red-500 w-24 h-24 mx-auto' }),
-                            React.createElement('h2', { key: 'status', className: `text-4xl font-bold mt-4 ${result.success ? 'text-green-500' : 'text-red-500'}` }, result.success ? t.correct : t.wrong),
-                            React.createElement('div', { key: 'results-comparison', className: 'mt-6 w-full max-w-md mx-auto space-y-4 text-lg' }, [
-                                // Your Answer Section
-                                React.createElement('div', { className: 'flex flex-col' }, [
-                                    React.createElement('span', { className: 'font-semibold text-gray-500 mb-2 text-center' }, `${t.yourAnswer}:`),
-                                    React.createElement('div', { className: 'flex w-full justify-center' },
-                                        result.player.map((playerDigit, index) => {
-                                            const correctDigit = result.correct[index];
-                                            const isDigitCorrect = playerDigit === correctDigit;
-                                            const displayValue = playerDigit === '' ? '_' : playerDigit;
-                                            const colorClass = isDigitCorrect ? 'text-green-500' : 'text-red-500';
+                    case 'showing_result': {
+                        // 1. Get the dynamic styles, which include the correct gap
+                        const styles = getResponsiveInputStyles(numDigits, isMobile);
 
-                                            return React.createElement('span', {
-                                                key: index,
-                                                // Each digit gets equal width (flex-1) and is centered
-                                                className: `flex-1 text-center font-mono font-bold ${colorClass}`
-                                            }, displayValue);
-                                        })
-                                    )
-                                ]),
-                                // Correct Answer Section
-                                !result.success && React.createElement('div', { className: 'flex flex-col' }, [
-                                    React.createElement('span', { className: 'font-semibold text-gray-500 mb-2 text-center' }, `${t.correctAnswer}:`),
-                                    React.createElement('div', { className: 'flex w-full justify-center' },
-                                        result.correct.map((digit, index) => {
-                                            return React.createElement('span', {
-                                                key: index,
-                                                // Each digit gets equal width (flex-1) and is centered
-                                                className: 'flex-1 text-center font-mono font-bold text-green-500'
-                                            }, digit);
-                                        })
-                                    )
-                                ])
+                        return React.createElement('div', { key: 'results-comparison', className: 'mt-6 w-full max-w-md mx-auto space-y-4 text-lg' }, [
+                            // Your Answer Section
+                            React.createElement('div', { className: 'flex flex-col' }, [
+                                React.createElement('span', { className: 'font-semibold text-gray-500 mb-2 text-center' }, `${t.yourAnswer}:`),
+                                // 2. Add the dynamic gap class here
+                                React.createElement('div', { className: `flex w-full justify-center ${styles.gap}` },
+                                    result.player.map((playerDigit, index) => {
+                                        const correctDigit = result.correct[index];
+                                        const isDigitCorrect = playerDigit === correctDigit;
+                                        const displayValue = playerDigit === '' ? '_' : playerDigit;
+                                        const colorClass = isDigitCorrect ? 'text-green-500' : 'text-red-500';
+
+                                        return React.createElement('span', {
+                                            key: index,
+                                            className: `flex-1 text-center font-mono font-bold ${colorClass}`
+                                        }, displayValue);
+                                    })
+                                )
+                            ]),
+                            // Correct Answer Section
+                            !result.success && React.createElement('div', { className: 'flex flex-col' }, [
+                                React.createElement('span', { className: 'font-semibold text-gray-500 mb-2 text-center' }, `${t.correctAnswer}:`),
+                                // 3. And also add the dynamic gap class here for alignment
+                                React.createElement('div', { className: `flex w-full justify-center ${styles.gap}` },
+                                    result.correct.map((digit, index) => {
+                                        return React.createElement('span', {
+                                            key: index,
+                                            className: 'flex-1 text-center font-mono font-bold text-green-500'
+                                        }, digit);
+                                    })
+                                )
                             ])
                         ]);
+                    }
                     case 'idle':
                     default:
                         return React.createElement('div', { className: "text-center" }, [
