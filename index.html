@@ -404,23 +404,25 @@
 
                 // --- Mobile-only logic below ---
 
-                // 8 or 9 digits: Use a slightly wider box (w-9) and smaller font (text-xl).
+                // 8 or 9 digits: Use smaller sizes for very narrow screens, and slighly larger for standard mobile (sm:).
                 if (numDigits > 7) {
                     return {
                         gap: 'gap-1',
-                        boxSize: 'w-9 h-12',
-                        textSize: 'text-xl'
+                        boxSize: 'w-8 sm:w-9 h-12', // Smaller by default, larger on sm+
+                        textSize: 'text-lg sm:text-xl'   // Smaller font by default, larger on sm+
                     };
                 }
-                // 6 or 7 digits: Keep the box size but reduce the gap for a better fit.
+
+                // 6 or 7 digits: Also make this tier more responsive.
                 if (numDigits > 5) {
                     return {
-                        gap: 'gap-1.5',
-                        boxSize: 'w-12 h-16',
-                        textSize: 'text-3xl'
+                        gap: 'gap-1 sm:gap-1.5',
+                        boxSize: 'w-10 sm:w-12 h-16',
+                        textSize: 'text-2xl sm:text-3xl'
                     };
                 }
-                // Default for 5 or fewer digits on mobile.
+
+                // Default for 5 or fewer digits on mobile (this layout is fine).
                 return {
                     gap: 'gap-2',
                     boxSize: 'w-16 h-20',
