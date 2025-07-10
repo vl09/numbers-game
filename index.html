@@ -640,30 +640,37 @@
                         return React.createElement('div', { className: 'text-center' }, [
                             result.success ? React.createElement(CheckIcon, { key: 'icon', className: 'text-green-500 w-24 h-24 mx-auto' }) : React.createElement(XCircleIcon, { key: 'icon', className: 'text-red-500 w-24 h-24 mx-auto' }),
                             React.createElement('h2', { key: 'status', className: `text-4xl font-bold mt-4 ${result.success ? 'text-green-500' : 'text-red-500'}` }, result.success ? t.correct : t.wrong),
-                            React.createElement('div', { key: 'results-comparison', className: 'mt-6 space-y-4 text-lg' }, [
-                                // Your Answer (with per-digit coloring)
-                                React.createElement('div', { className: 'flex flex-col items-center' }, [
-                                    React.createElement('span', { className: 'font-semibold text-gray-500 mb-2' }, `${t.yourAnswer}:`),
-                                    React.createElement('div', { className: 'flex items-center justify-center gap-3 font-mono font-bold' },
+                            React.createElement('div', { key: 'results-comparison', className: 'mt-6 w-full max-w-md mx-auto space-y-4 text-lg' }, [
+                                // Your Answer Section
+                                React.createElement('div', { className: 'flex flex-col' }, [
+                                    React.createElement('span', { className: 'font-semibold text-gray-500 mb-2 text-center' }, `${t.yourAnswer}:`),
+                                    React.createElement('div', { className: 'flex w-full justify-center' },
                                         result.player.map((playerDigit, index) => {
                                             const correctDigit = result.correct[index];
                                             const isDigitCorrect = playerDigit === correctDigit;
-
-                                            // Use an underscore for blank inputs
                                             const displayValue = playerDigit === '' ? '_' : playerDigit;
-
-                                            // Determine the color based on correctness
                                             const colorClass = isDigitCorrect ? 'text-green-500' : 'text-red-500';
 
-                                            return React.createElement('span', { key: index, className: colorClass }, displayValue);
+                                            return React.createElement('span', {
+                                                key: index,
+                                                // Each digit gets equal width (flex-1) and is centered
+                                                className: `flex-1 text-center font-mono font-bold ${colorClass}`
+                                            }, displayValue);
                                         })
                                     )
                                 ]),
-                                // Correct Answer (only shows if wrong)
-                                !result.success && React.createElement('div', { className: 'flex flex-col items-center' }, [
-                                    React.createElement('span', { className: 'font-semibold text-gray-500 mb-2' }, `${t.correctAnswer}:`),
-                                    // Join the array to display the correct answer as a string
-                                    React.createElement('span', { className: 'font-mono font-bold text-green-600' }, result.correct.join(' '))
+                                // Correct Answer Section
+                                !result.success && React.createElement('div', { className: 'flex flex-col' }, [
+                                    React.createElement('span', { className: 'font-semibold text-gray-500 mb-2 text-center' }, `${t.correctAnswer}:`),
+                                    React.createElement('div', { className: 'flex w-full justify-center' },
+                                        result.correct.map((digit, index) => {
+                                            return React.createElement('span', {
+                                                key: index,
+                                                // Each digit gets equal width (flex-1) and is centered
+                                                className: 'flex-1 text-center font-mono font-bold text-green-500'
+                                            }, digit);
+                                        })
+                                    )
                                 ])
                             ])
                         ]);
