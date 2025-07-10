@@ -498,7 +498,7 @@
                 const normalizedPlayerInput = playerInput.map(val => String(Number(val)));
                 const isCorrect = JSON.stringify(normalizedPlayerInput) === JSON.stringify(expected);
                 
-                setResult({ success: isCorrect, correct: expected.join(' '), player: playerInput.join(' ') });
+                setResult({ success: isCorrect, correct: expected, player: playerInput });
                 if (isCorrect) setScore(prev => prev + 1);
                 setRoundsPlayed(prev => prev + 1);
                 setGameState('showing_result');
@@ -640,14 +640,30 @@
                         return React.createElement('div', { className: 'text-center' }, [
                             result.success ? React.createElement(CheckIcon, { key: 'icon', className: 'text-green-500 w-24 h-24 mx-auto' }) : React.createElement(XCircleIcon, { key: 'icon', className: 'text-red-500 w-24 h-24 mx-auto' }),
                             React.createElement('h2', { key: 'status', className: `text-4xl font-bold mt-4 ${result.success ? 'text-green-500' : 'text-red-500'}` }, result.success ? t.correct : t.wrong),
-                            React.createElement('div', { key: 'results-comparison', className: 'mt-4 space-y-2 font-mono text-lg' }, [
-                                React.createElement('div', {}, [
-                                    React.createElement('span', { className: 'font-semibold text-gray-500' }, `${t.yourAnswer}: `),
-                                    React.createElement('span', { className: `font-bold ${result.success ? 'text-green-600' : 'text-red-600'}` }, result.player)
+                            React.createElement('div', { key: 'results-comparison', className: 'mt-6 space-y-4 text-lg' }, [
+                                // Your Answer (with per-digit coloring)
+                                React.createElement('div', { className: 'flex flex-col items-center' }, [
+                                    React.createElement('span', { className: 'font-semibold text-gray-500 mb-2' }, `${t.yourAnswer}:`),
+                                    React.createElement('div', { className: 'flex items-center justify-center gap-3 font-mono font-bold' },
+                                        result.player.map((playerDigit, index) => {
+                                            const correctDigit = result.correct[index];
+                                            const isDigitCorrect = playerDigit === correctDigit;
+
+                                            // Use an underscore for blank inputs
+                                            const displayValue = playerDigit === '' ? '_' : playerDigit;
+
+                                            // Determine the color based on correctness
+                                            const colorClass = isDigitCorrect ? 'text-green-500' : 'text-red-500';
+
+                                            return React.createElement('span', { key: index, className: colorClass }, displayValue);
+                                        })
+                                    )
                                 ]),
-                                !result.success && React.createElement('div', {}, [
-                                    React.createElement('span', { className: 'font-semibold text-gray-500' }, `${t.correctAnswer}: `),
-                                    React.createElement('span', { className: 'font-bold text-green-600' }, result.correct)
+                                // Correct Answer (only shows if wrong)
+                                !result.success && React.createElement('div', { className: 'flex flex-col items-center' }, [
+                                    React.createElement('span', { className: 'font-semibold text-gray-500 mb-2' }, `${t.correctAnswer}:`),
+                                    // Join the array to display the correct answer as a string
+                                    React.createElement('span', { className: 'font-mono font-bold text-green-600' }, result.correct.join(' '))
                                 ])
                             ])
                         ]);
