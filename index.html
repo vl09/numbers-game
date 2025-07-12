@@ -662,7 +662,7 @@
                                 className: `text-3xl font-bold text-center mt-2 mb-8 ${isCorrect ? 'text-green-600' : 'text-red-600'}`
                             }, isCorrect ? t.correct : t.wrong),
 
-                            // 2. The original number comparison section
+                            // 2. The number comparison section
                             React.createElement('div', { key: 'results-comparison', className: 'w-full max-w-md mx-auto space-y-4 text-lg' }, [
                                 // Your Answer Section
                                 React.createElement('div', { className: 'flex flex-col' }, [
@@ -676,8 +676,8 @@
 
                                             return React.createElement('span', {
                                                 key: index,
-                                                // NOTE: 'flex-1' is removed and font-size is increased
-                                                className: `text-4xl text-center font-mono font-bold ${colorClass}`
+                                                // Added 'px-1' for horizontal padding
+                                                className: `text-4xl text-center font-mono font-bold px-1 ${colorClass}`
                                             }, displayValue);
                                         })
                                     )
@@ -689,7 +689,8 @@
                                         result.correct.map((digit, index) => {
                                             return React.createElement('span', {
                                                 key: index,
-                                                className: 'text-4xl text-center font-mono font-bold text-green-500'
+                                                 // Added 'px-1' for horizontal padding
+                                                className: 'text-4xl text-center font-mono font-bold px-1 text-green-500'
                                             }, digit);
                                         })
                                     )
