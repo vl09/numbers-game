@@ -646,14 +646,14 @@
                         ]);
                     }
                     case 'showing_result': {
-                        // 1. Get the dynamic styles, which include the correct gap
+                        // Get the dynamic styles, which include the correct gap
                         const styles = getResponsiveInputStyles(numDigits, isMobile);
 
                         return React.createElement('div', { key: 'results-comparison', className: 'mt-6 w-full max-w-md mx-auto space-y-4 text-lg' }, [
                             // Your Answer Section
                             React.createElement('div', { className: 'flex flex-col' }, [
                                 React.createElement('span', { className: 'font-semibold text-gray-500 mb-2 text-center' }, `${t.yourAnswer}:`),
-                                // 2. Add the dynamic gap class here
+                                // Add the dynamic gap class here
                                 React.createElement('div', { className: `flex w-full justify-center ${styles.gap}` },
                                     result.player.map((playerDigit, index) => {
                                         const correctDigit = result.correct[index];
@@ -661,9 +661,10 @@
                                         const displayValue = playerDigit === '' ? '_' : playerDigit;
                                         const colorClass = isDigitCorrect ? 'text-green-500' : 'text-red-500';
 
+                                        // The 'flex-1' class has been removed from here
                                         return React.createElement('span', {
                                             key: index,
-                                            className: `flex-1 text-center font-mono font-bold ${colorClass}`
+                                            className: `text-center font-mono font-bold ${colorClass}`
                                         }, displayValue);
                                     })
                                 )
@@ -671,12 +672,13 @@
                             // Correct Answer Section
                             !result.success && React.createElement('div', { className: 'flex flex-col' }, [
                                 React.createElement('span', { className: 'font-semibold text-gray-500 mb-2 text-center' }, `${t.correctAnswer}:`),
-                                // 3. And also add the dynamic gap class here for alignment
+                                // And also add the dynamic gap class here for alignment
                                 React.createElement('div', { className: `flex w-full justify-center ${styles.gap}` },
                                     result.correct.map((digit, index) => {
+                                        // The 'flex-1' class has been removed from here as well
                                         return React.createElement('span', {
                                             key: index,
-                                            className: 'flex-1 text-center font-mono font-bold text-green-500'
+                                            className: 'text-center font-mono font-bold text-green-500'
                                         }, digit);
                                     })
                                 )
