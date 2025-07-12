@@ -650,7 +650,7 @@
                         const isCorrect = result.success;
 
                         const resultContainerContent = [
-                            // 1. Icon and Status Message (Re-added as requested)
+                            // Icon and Status Message
                             isCorrect
                                 ? React.createElement(CheckIcon, { key: 'icon-correct', className: 'text-green-500 w-20 h-20 mx-auto' })
                                 : React.createElement(XCircleIcon, { key: 'icon-wrong', className: 'text-red-500 w-20 h-20 mx-auto' }),
@@ -660,8 +660,9 @@
                                 className: `text-3xl font-bold text-center mt-2 mb-8 ${isCorrect ? 'text-green-600' : 'text-red-600'}`
                             }, isCorrect ? t.correct : t.wrong),
 
-                            // 2. The number comparison section with the alignment fix
-                            React.createElement('div', { key: 'results-comparison', className: 'w-full max-w-md mx-auto space-y-4 text-lg' }, [
+                            // The number comparison section with the alignment fix
+                            // ADDED: px-4 for horizontal padding on mobile
+                            React.createElement('div', { key: 'results-comparison', className: 'w-full max-w-md mx-auto space-y-4 text-lg px-4' }, [
                                 // Your Answer Section
                                 React.createElement('div', { className: 'flex flex-col' }, [
                                     React.createElement('span', { className: 'font-semibold text-gray-500 mb-2 text-center' }, `${t.yourAnswer}:`),
@@ -674,8 +675,8 @@
 
                                             return React.createElement('span', {
                                                 key: index,
-                                                // Fixed width for alignment and sensible font size
-                                                className: `w-12 text-2xl text-center font-mono font-bold ${colorClass}`
+                                                // CHANGED: w-12 -> w-10 and text-2xl -> text-xl
+                                                className: `w-10 text-xl text-center font-mono font-bold ${colorClass}`
                                             }, displayValue);
                                         })
                                     )
@@ -687,8 +688,8 @@
                                         result.correct.map((digit, index) => {
                                             return React.createElement('span', {
                                                 key: index,
-                                                // Fixed width for alignment and sensible font size
-                                                className: 'w-12 text-2xl text-center font-mono font-bold text-green-500'
+                                                // CHANGED: w-12 -> w-10 and text-2xl -> text-xl
+                                                className: 'w-10 text-xl text-center font-mono font-bold text-green-500'
                                             }, digit);
                                         })
                                     )
